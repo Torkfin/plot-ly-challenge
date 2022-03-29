@@ -1,34 +1,50 @@
-// Read samples.json data 
+// Read samples.json data and create the list of ID's  
 d3.json("data/samples.json").then((data)=> {
-//    console.log(data)
+    //console.log(data)
+    data.names.forEach(function(ids) {
+    dropdown.append("option").text(ids).property("value")
+    });
 
-// Assign the data to the dropdwown menu
-data.names.forEach(function(name) {
-dropdown.append("option").text(name).property("value");
+    // Call the functions to display the plots on the page
+    getPlots(data.names[0]);
+    getData(data.names[0]);
 });
 
-// Call the functions to display the data and the plots to the page
-getPlots(data.names[0]);
-getData(data.names[0]);
-});
-
-
-// Fill dropdown data
+// Fill the dropdown square with ID's
 let dropdown = d3.select("#selDataset");
 
-// Create the change event function
-function optionChanged(id) {
-    getPlots(id);
-    getData(id);
+
+// Create the function to get the json data for the Demographic Info window
+function getData(id) {
+    d3.json("data/samples.json").then((data)=> {
+        
+        // Get the metadata info for the demographic panel
+        let metadata = data.metadata;
+
+        // Filter meta data info by id
+        let result = metadata.filter(meta => meta.id.toString() === id)[0];
+
+        // Select demographic panel to put data
+        let demographicInfo = d3.select("#sample-metadata");
+        
+        // Purge the demographic info panel for each new selection
+        demographicInfo.html("");
+
+        // Grab the demographic id and add the info to the panel
+        Object.entries(result).forEach((key) => {   
+                demographicInfo.append("h4").text(key[0].toUpperCase() + ": " + key[1] + "\n");    
+        });
+    });
 }
+
+
 
 //  Plot the graphs
 function getPlots(id) {
    
-   
-    // Get the data from the JSON file
+    // Get the data for the selected ID from the JSON file
     d3.json("data/samples.json").then((data)=> {
-        console.log(data)
+        //console.log(data)
         // Get the metadata info for wref
         let metadata = data.metadata;
 
@@ -39,24 +55,24 @@ function getPlots(id) {
         let wfreq = result.wfreq;
                 
         // Filter values by ID 
-        let samples = data.samples.filter(s => s.id.toString() === id)[0];
+        let samples = data.samples.filter(sample => sample.id.toString() === id)[0];
         
         // Get the top 10 values 
         let samplevalues = samples.sample_values.slice(0, 10).reverse();
   
-        // Geth the top 10 OUT IDs.  
+        // Get the top 10 OUT IDs.  
         let OTU_top = (samples.otu_ids.slice(0, 10)).reverse();
         
-        // get the otu id's to the desired form for the plot
+        // Get the OUT id's to the desired form for the plot
         let OTU_id = OTU_top.map(d => "OTU " + d)
   
          
-        // get the top 10 labels for the plot
+        // Get the top 10 labels for the plot
        let labels = samples.otu_labels.slice(0, 10);
   
       //   console.log(`Sample Values: ${samplevalues}`)
       //   console.log(`Id Values: ${OTU_top}`)
-        // create trace variable for the plot
+        // Create trace variable for the plot
         let trace = {
             x: samplevalues,
             y: OTU_id,
@@ -67,30 +83,30 @@ function getPlots(id) {
             orientation: "h",
         };
   
-        // create data variable
+        // Create bar data variable
         let bar_data = [trace];
   
-        // create layout variable to set plots layout
+        // Create layout 
         let bar_layout = {
             title: "Top 10 OTU",
             yaxis:{
                 tickmode:"linear",
             },
             margin: {
-                l: 175,
-                r: 75,
+                l: 125,
+                r: 5,
                 t: 75,
                 b: 0
 
             }
         };
   
-        // create the bar plot
+        // Create the bar plot layout
         Plotly.newPlot("bar", bar_data, bar_layout);
   
         //console.log(`ID: ${samples.otu_ids}`)
       
-        // The bubble chart
+        // Create the bubble chart
         let trace1 = {
             x: samples.otu_ids,
             y: samples.sample_values,
@@ -103,7 +119,7 @@ function getPlots(id) {
   
         };
   
-        // set the layout for the bubble plot
+        // Create the bubble plot layout
        let bubble_layout = {
             xaxis:{title: "OTU ID"},
             yaxis:{title: "Germ Count in Sample"},
@@ -112,13 +128,13 @@ function getPlots(id) {
             width: 1300
         };
   
-        // creating data variable 
+        // Creating bubble chart data variable 
         let bubble_data = [trace1];
   
-        // create the bubble plot
+        // Create the bubble plot
         Plotly.newPlot("bubble", bubble_data, bubble_layout); 
   
-        // The guage chart
+        // Create the guage chart
   
         let gauge_data = [
           {
@@ -144,39 +160,21 @@ function getPlots(id) {
         let gauge_layout = { 
             width: 550, 
             height: 600, 
-            margin: { t: 20, b: 40, l:0, r:100 } 
+            margin: { t: 20, b: 0, l:0, r:170 } 
           };
         Plotly.newPlot("gauge", gauge_data, gauge_layout);
       });
   } 
   
 
-// Create the function to get the necessary data
-function getData(id) {
-    d3.json("data/samples.json").then((data)=> {
-        
-        // Get the metadata info for the demographic panel
-        let metadata = data.metadata;
 
-        // Filter meta data info by id
-        let result = metadata.filter(meta => meta.id.toString() === id)[0];
 
-        // Select demographic panel to put data
-        let demographicInfo = d3.select("#sample-metadata");
-        
-        // Purge the demographic info panel each time new selection
-        demographicInfo.html("");
-
-        // Grab the demographic id and add the info to the panel
-        Object.entries(result).forEach((key) => {   
-                demographicInfo.append("h5").text(key[0].toUpperCase() + ": " + key[1] + "\n");    
-        });
-    });
-}
-
-// Create the function for the change event
+// Create the change function
 function optionChanged(id) {
     getPlots(id);
     getData(id);
 }
+
+
+
 
