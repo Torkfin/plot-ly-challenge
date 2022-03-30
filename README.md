@@ -1,7 +1,7 @@
 # Plot.ly Homework - Belly Button Biodiversity (BBB)
 
 The HTML and JavaScript to create the BBB web page are included in the main directory.  The link to the web page hosted at GitHub is: 
-
+https://torkfin.github.io/plot-ly-challenge/.
 
 
 ![Bacteria by filterforge.com](Images/bacteria.jpg)
