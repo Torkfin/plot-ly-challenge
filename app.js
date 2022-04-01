@@ -1,8 +1,8 @@
 // Read samples.json data and create the list of ID's  
 d3.json("data/samples.json").then((data)=> {
     //console.log(data)
-    data.names.forEach(function(ids) {
-    dropdown.append("option").text(ids).property("value")
+    data.names.forEach(function(data) {
+    dropdown.append("option").text(data).property("value")
     });
 
     // Call the functions to display the plots on the page
