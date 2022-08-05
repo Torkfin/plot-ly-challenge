@@ -140,7 +140,7 @@ function getPlots(id) {
           {
           domain: { x: [0, 1], y: [0, 1] },
           value: parseFloat(wfreq),
-          title: { text: `Weekly Washing Frequency ` },
+          title: { text: `Legal Department Maturity` },
           type: "indicator",
           
           mode: "gauge+number",
